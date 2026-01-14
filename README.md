@@ -12,24 +12,6 @@ This project demonstrates production-grade data engineering practices including 
 
 ---
 
-## 📋 Table of Contents
-
-- [Business Context](#-business-context)
-- [Architecture](#-architecture)
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [Data Model](#-data-model)
-- [Getting Started](#-getting-started)
-- [Usage](#-usage)
-- [Data Quality](#-data-quality)
-- [Pipeline Orchestration](#-pipeline-orchestration)
-- [Testing](#-testing)
-- [Documentation](#-documentation)
-- [Future Enhancements](#-future-enhancements)
-- [Author](#-author)
-
----
-
 ## 🎯 Business Context
 
 ### The Problem
