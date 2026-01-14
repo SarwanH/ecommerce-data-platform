@@ -1,4 +1,3 @@
-"""Tests for data generation."""
 import pytest
 import pandas as pd
 from src.ingestion.generate_data import generate_products, generate_stores
