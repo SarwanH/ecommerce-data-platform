@@ -1,0 +1,24 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    tables:
+      - name: products
+        columns:
+          - name: product_id
+            tests: [unique, not_null]
+      - name: stores
+        columns:
+          - name: store_id
+            tests: [unique, not_null]
+      - name: customers
+        columns:
+          - name: customer_id
+            tests: [unique, not_null]
+      - name: transactions
+        columns:
+          - name: transaction_id
+            tests: [unique, not_null]
+      - name: inventory_snapshots
+      - name: page_views
