@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# Environment
+.env
+*.env
+
+# IDE
+.idea/
+.vscode/
+
+# Data (keep sample only)
+data/raw/*
+data/processed/*
+!data/sample/
+
+# Database
+*.db
+*.duckdb
+
+# Logs
+logs/
+*.log
+airflow/logs/
+
+# dbt
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+
+# Great Expectations
+great_expectations/uncommitted/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Coverage
+.coverage
+htmlcov/
