@@ -8,15 +8,12 @@ faker==21.0.0
 duckdb==0.9.2
 sqlalchemy>=1.4.28,<2.0
 
-# dbt
-dbt-core==1.7.4
-dbt-duckdb==1.7.1
+# dbt - using 1.7.18 which fixes protobuf compatibility
+dbt-core==1.7.18
+dbt-duckdb==1.7.4
 
-# Airflow
-apache-airflow==2.8.0
-
-# Data Quality
-great-expectations==0.18.8
+# Pin protobuf to compatible version
+protobuf>=4.0.0,<5.0.0
 
 # Testing
 pytest==7.4.3

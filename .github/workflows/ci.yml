@@ -6,12 +6,16 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  PYTHONPATH: ${{ github.workspace }}
+
 jobs:
   test:
     runs-on: ubuntu-latest
     
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
       
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -20,23 +24,35 @@ jobs:
       
       - name: Install dependencies
         run: |
+          python -m pip install --upgrade pip
+          pip install "protobuf>=4.0.0,<5.0.0"
           pip install -r requirements.txt
       
       - name: Run tests
         run: |
-          pytest tests/ -v
+          pytest tests/ -v --tb=short
+        env:
+          PYTHONPATH: ${{ github.workspace }}
       
-      - name: Generate data
+      - name: Generate sample data
         run: |
-          python src/ingestion/generate_data.py --days 7
+          python src/ingestion/generate_data.py --days 7 --output data/sample
       
       - name: Initialize warehouse
         run: |
           python src/utils/database.py
       
-      - name: Run dbt
+      - name: Install dbt packages
         run: |
           cd dbt
           dbt deps
-          dbt run
-          dbt test
+        
+      - name: Run dbt models
+        run: |
+          cd dbt
+          dbt run --profiles-dir .
+      
+      - name: Run dbt tests
+        run: |
+          cd dbt
+          dbt test --profiles-dir .
