@@ -1,4 +1,4 @@
-# 🏠 E-Commerce Data Platform
+# E-Commerce Data Platform
 
 [![CI Pipeline](https://github.com/SarwanH/ecommerce-data-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/SarwanH/ecommerce-data-platform/actions/workflows/ci.yml)
 [![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
@@ -12,7 +12,7 @@ This project demonstrates production-grade data engineering practices including 
 
 ---
 
-## 🎯 Business Context
+## Business Context
 
 ### The Problem
 
@@ -35,61 +35,7 @@ This platform provides the data infrastructure to:
 
 ---
 
-## 🏗 Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                           DATA ARCHITECTURE                                  │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│   ┌──────────────┐     ┌──────────────┐     ┌──────────────┐                │
-│   │   SOURCES    │     │  INGESTION   │     │   STORAGE    │                │
-│   ├──────────────┤     ├──────────────┤     ├──────────────┤                │
-│   │ • POS System │────▶│   Python     │────▶│  Data Lake   │                │
-│   │ • E-Commerce │     │  Scripts     │     │  (Parquet)   │                │
-│   │ • Inventory  │     │              │     │              │                │
-│   │ • Clickstream│     └──────────────┘     └──────┬───────┘                │
-│   └──────────────┘                                 │                         │
-│                                                    ▼                         │
-│   ┌─────────────────────────────────────────────────────────────────────┐   │
-│   │                        TRANSFORMATION (dbt)                          │   │
-│   ├─────────────────────────────────────────────────────────────────────┤   │
-│   │                                                                      │   │
-│   │   ┌─────────┐      ┌──────────────┐      ┌─────────────────────┐    │   │
-│   │   │  RAW    │─────▶│   STAGING    │─────▶│       MARTS         │    │   │
-│   │   │         │      │              │      │                     │    │   │
-│   │   │raw.     │      │stg_products  │      │ fact_sales          │    │   │
-│   │   │products │      │stg_stores    │      │ dim_product (SCD2)  │    │   │
-│   │   │stores   │      │stg_customers │      │ dim_customer        │    │   │
-│   │   │etc...   │      │stg_txns      │      │ dim_store           │    │   │
-│   │   └─────────┘      └──────────────┘      │ dim_date            │    │   │
-│   │                                          │ mart_demand_forecast│    │   │
-│   │                                          └─────────────────────┘    │   │
-│   └─────────────────────────────────────────────────────────────────────┘   │
-│                                                    │                         │
-│                                                    ▼                         │
-│   ┌──────────────┐     ┌──────────────┐     ┌──────────────┐                │
-│   │    QUALITY   │     │ ORCHESTRATE  │     │   CONSUME    │                │
-│   ├──────────────┤     ├──────────────┤     ├──────────────┤                │
-│   │    Great     │     │   Apache     │     │ • Dashboards │                │
-│   │ Expectations │     │   Airflow    │     │ • ML Models  │                │
-│   │              │     │              │     │ • Analytics  │                │
-│   └──────────────┘     └──────────────┘     └──────────────┘                │
-│                                                                              │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
-
-### Design Principles
-
-1. **Medallion Architecture**: Raw → Staging → Marts layers for clear data lineage
-2. **Idempotent Pipelines**: All transformations can be safely re-run
-3. **Schema-on-Read**: Parquet files in the data lake preserve full fidelity
-4. **Dimensional Modeling**: Star schema optimized for analytical queries
-5. **Infrastructure as Code**: All configurations version-controlled
-
----
-
-## 🛠 Tech Stack
+## Tech Stack
 
 | Layer | Technology | Purpose |
 |-------|------------|---------|
@@ -112,141 +58,7 @@ This platform provides the data infrastructure to:
 
 ---
 
-## 📁 Project Structure
-
-```
-ecommerce-data-platform/
-│
-├── 📂 src/                          # Source code
-│   ├── ingestion/
-│   │   ├── __init__.py
-│   │   └── generate_data.py         # Synthetic data generator
-│   ├── models/
-│   │   ├── __init__.py
-│   │   └── schemas.py               # Data class definitions
-│   └── utils/
-│       ├── __init__.py
-│       └── database.py              # DuckDB connection utilities
-│
-├── 📂 dbt/                          # dbt transformation project
-│   ├── models/
-│   │   ├── staging/                 # Clean, typed source data
-│   │   │   ├── stg_products.sql
-│   │   │   ├── stg_stores.sql
-│   │   │   ├── stg_customers.sql
-│   │   │   ├── stg_transactions.sql
-│   │   │   ├── stg_inventory_snapshots.sql
-│   │   │   └── stg_page_views.sql
-│   │   ├── intermediate/            # Business logic layer
-│   │   │   ├── int_daily_sales.sql
-│   │   │   ├── int_product_performance.sql
-│   │   │   └── int_customer_metrics.sql
-│   │   └── marts/                   # Consumption-ready models
-│   │       ├── fact_sales.sql
-│   │       ├── dim_product.sql
-│   │       ├── dim_customer.sql
-│   │       ├── dim_store.sql
-│   │       ├── dim_date.sql
-│   │       └── mart_demand_forecast_input.sql
-│   ├── seeds/                       # Static reference data
-│   ├── tests/                       # Custom data tests
-│   ├── macros/                      # Reusable SQL functions
-│   ├── dbt_project.yml              # dbt configuration
-│   └── packages.yml                 # dbt package dependencies
-│
-├── 📂 airflow/                      # Pipeline orchestration
-│   └── dags/
-│       └── ecommerce_pipeline.py    # Main ETL DAG
-│
-├── 📂 data/                         # Data storage
-│   └── sample/                      # Sample parquet files
-│       ├── products.parquet
-│       ├── stores.parquet
-│       ├── customers.parquet
-│       ├── transactions.parquet
-│       ├── inventory_snapshots.parquet
-│       └── page_views.parquet
-│
-├── 📂 great_expectations/           # Data quality
-│   └── expectations/
-│       └── transactions_suite.json  # Validation rules
-│
-├── 📂 tests/                        # Python tests
-│   └── unit/
-│       └── test_data_generation.py
-│
-├── 📂 docs/                         # Documentation
-│   ├── architecture.md              # Design decisions (ADRs)
-│   └── data-dictionary.md           # Business definitions
-│
-├── 📂 docker/                       # Container configs
-│   └── docker-compose.yml           # Airflow stack
-│
-├── 📂 .github/workflows/            # CI/CD
-│   └── ci.yml                       # GitHub Actions pipeline
-│
-├── requirements.txt                 # Python dependencies
-├── .gitignore
-└── README.md
-```
-
----
-
-## 📊 Data Model
-
-### Entity Relationship Diagram
-
-```
-                            ┌─────────────────┐
-                            │    dim_date     │
-                            ├─────────────────┤
-                            │ date_key (PK)   │
-                            │ year            │
-                            │ quarter         │
-                            │ month           │
-                            │ week_of_year    │
-                            │ day_of_week     │
-                            │ is_weekend      │
-                            │ fiscal_year     │
-                            └────────┬────────┘
-                                     │
-┌─────────────────┐         ┌───────┴───────┐         ┌─────────────────┐
-│   dim_product   │         │   fact_sales   │         │  dim_customer   │
-├─────────────────┤         ├───────────────┤         ├─────────────────┤
-│ product_key(PK) │◄────────│ transaction_id │────────▶│ customer_id(PK) │
-│ product_id      │         │ order_id       │         │ customer_type   │
-│ sku             │         │ customer_id(FK)│         │ loyalty_tier    │
-│ product_name    │         │ product_id(FK) │         │ lifetime_value  │
-│ category        │         │ store_id (FK)  │         │ first_order_date│
-│ subcategory     │         │ transaction_dt │         │ last_order_date │
-│ brand           │         │ quantity       │         │ purchase_segment│
-│ unit_price      │         │ unit_price     │         └─────────────────┘
-│ unit_cost       │         │ discount_amt   │
-│ margin_pct      │         │ total_amount   │         ┌─────────────────┐
-│ is_current(SCD2)│         │ order_status   │         │   dim_store     │
-└─────────────────┘         │ channel        │         ├─────────────────┤
-                            │ fulfillment    │────────▶│ store_id (PK)   │
-                            │ line_cost      │         │ store_name      │
-                            │ line_profit    │         │ store_type      │
-                            └───────────────┘         │ city            │
-                                                       │ state           │
-                                                       │ region          │
-                                                       └─────────────────┘
-```
-
-### Key Metrics Calculated
-
-| Metric | Description | Business Use |
-|--------|-------------|--------------|
-| `margin_pct` | (price - cost) / price × 100 | Product profitability analysis |
-| `line_profit` | Revenue - COGS per line item | Transaction-level P&L |
-| `lifetime_value` | Sum of all customer purchases | Customer segmentation |
-| `days_of_supply` | Inventory / avg daily sales | Stock-out prevention |
-| `purchase_segment` | RFM-based classification | Marketing targeting |
-
----
-
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -284,7 +96,7 @@ EOF
 
 ---
 
-## 💻 Usage
+## Usage
 
 ### Generate Sample Data
 
@@ -367,7 +179,7 @@ print(execute_query(query))
 
 ---
 
-## ✅ Data Quality
+## Data Quality
 
 ### Great Expectations Suite
 
@@ -406,33 +218,33 @@ dbt test
 
 ---
 
-## ⏰ Pipeline Orchestration
+## Pipeline Orchestration
 
 ### Airflow DAG Overview
 
 ```
 ecommerce_data_pipeline (Daily @ 6:00 AM UTC)
 │
-├── 📥 ingestion (TaskGroup)
+├── ingestion (TaskGroup)
 │   ├── extract_transactions
 │   ├── extract_inventory
 │   └── extract_clickstream
 │
-├── ✅ data_quality (TaskGroup)
+├── data_quality (TaskGroup)
 │   └── run_quality_checks
 │
-├── 🔄 dbt_transformations (TaskGroup)
+├── dbt_transformations (TaskGroup)
 │   ├── dbt_deps
 │   ├── dbt_run_staging
 │   ├── dbt_run_intermediate
 │   ├── dbt_run_marts
 │   └── dbt_test
 │
-├── 📊 analytics (TaskGroup)
+├── analytics (TaskGroup)
 │   ├── generate_forecast_features
 │   └── update_dashboards
 │
-└── 📧 notify_completion
+└── notify_completion
 ```
 
 ### Running Airflow Locally
@@ -448,7 +260,7 @@ docker-compose up -d
 
 ---
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Run all Python tests
@@ -474,7 +286,7 @@ pytest tests/unit/test_data_generation.py -v
 
 ---
 
-## 🔮 Future Enhancements
+## Future Enhancements
 
 - [ ] **Streaming Ingestion**: Add Kafka/Kinesis for real-time clickstream
 - [ ] **ML Pipeline**: Integrate demand forecasting model with Vertex AI
@@ -482,15 +294,3 @@ pytest tests/unit/test_data_generation.py -v
 - [ ] **Data Contracts**: Implement schema registry for producer/consumer contracts
 - [ ] **Cost Optimization**: Add BigQuery slot management and query optimization
 - [ ] **Alerting**: PagerDuty/Slack integration for pipeline failures
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-<p align="center">
-  <i>Built with ☕ and a passion for clean data pipelines</i>
-</p>
